@@ -30,6 +30,9 @@ use App\Http\Controllers\User\CashController;
 use App\Http\Controllers\User\AllUserController;
 
 use App\Http\Controllers\Frontend\ShopController;
+use App\Http\Controllers\AZMedia\AZMediaCareersController;
+use App\Http\Controllers\AZMedia\CandidatePortalController;
+use App\Http\Controllers\AZMedia\AZMediaATSController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -68,7 +71,63 @@ Route::middleware(['auth:sanctum,web', 'verified'])->get('/dashboard', function 
     $user = User::find($id);
     return view('dashboard',compact('user'));
 })->name('dashboard');
-Route::get('/', [IndexController::class, 'index']);
+/*
+|--------------------------------------------------------------------------
+| HỆ THỐNG TUYỂN DỤNG THỰC TẬP SINH AZ MEDIA (CHI NHÁNH ĐÀ NẴNG)
+| Dự án: Mô hình xây dựng Web Tuyển TTS AZMedia
+| Bổ sung từ: Báo cáo thực tập AZ Media (SVTH: Nguyễn Nhật Linh Ân - 24CNTT1A - DNC, GVHD: Đặng Quý Linh)
+|--------------------------------------------------------------------------
+*/
+
+// Phân hệ 1: Careers Landing Page & Nộp đơn
+Route::get('/', [AZMediaCareersController::class, 'index'])->name('azmedia.home');
+Route::get('/careers', [AZMediaCareersController::class, 'index'])->name('azmedia.careers.index');
+Route::get('/careers/job/{slug}', [AZMediaCareersController::class, 'jobDetail'])->name('azmedia.job.detail');
+Route::post('/careers/apply', [AZMediaCareersController::class, 'submitApply'])->name('azmedia.apply.submit');
+
+// Phân hệ 2: Candidate Portal & Online Test
+Route::get('/candidate/track', [CandidatePortalController::class, 'trackPage'])->name('azmedia.candidate.track');
+Route::post('/candidate/track', [CandidatePortalController::class, 'trackSubmit'])->name('azmedia.candidate.track.post');
+Route::get('/candidate/test/{code}', [CandidatePortalController::class, 'takeTest'])->name('azmedia.candidate.test');
+Route::post('/candidate/test/{code}/submit', [CandidatePortalController::class, 'submitTest'])->name('azmedia.candidate.test.submit');
+Route::get('/candidate/test/{code}/pdf', [CandidatePortalController::class, 'downloadTestPDF'])->name('azmedia.candidate.test.pdf');
+
+// Download báo cáo công việc tuần (tạo mới mỗi lần tải)
+Route::get('/portal/download-report', [AZMediaATSController::class, 'downloadWeeklyReport'])->name('azmedia.portal.download.report');
+
+// Phân hệ 3: Internal Mini-ATS (Admin, HR, Mentor)
+Route::redirect('/portal', '/portal/dashboard');
+Route::get('/portal/login', [AZMediaATSController::class, 'loginPage'])->name('azmedia.login');
+Route::post('/portal/login', [AZMediaATSController::class, 'processLogin'])->name('azmedia.login.submit');
+Route::get('/portal/logout', [AZMediaATSController::class, 'logout'])->name('azmedia.logout');
+
+Route::prefix('portal')->group(function () {
+    Route::get('/dashboard', [AZMediaATSController::class, 'dashboard'])->name('azmedia.portal.dashboard');
+    Route::get('/kanban', [AZMediaATSController::class, 'kanban'])->name('azmedia.portal.kanban');
+    Route::post('/candidates/auto-approve-all', [AZMediaATSController::class, 'autoApproveAll'])->name('azmedia.portal.candidates.auto.approve');
+    Route::get('/applications', [AZMediaATSController::class, 'applications'])->name('azmedia.portal.applications');
+    Route::get('/candidate/{id}', [AZMediaATSController::class, 'candidateDetail'])->name('azmedia.portal.candidate.detail');
+    Route::get('/candidate/{id}/cv', [AZMediaATSController::class, 'viewCV'])->name('azmedia.portal.candidate.cv');
+    Route::get('/candidate/{id}/test-pdf', [AZMediaATSController::class, 'viewTestPDF'])->name('azmedia.portal.candidate.test.pdf');
+    Route::post('/candidate/{id}/status', [AZMediaATSController::class, 'updateStatus'])->name('azmedia.portal.candidate.status');
+    Route::post('/candidate/{id}/resend-email', [AZMediaATSController::class, 'resendEmail'])->name('azmedia.portal.candidate.resend.email');
+    Route::post('/candidate/{id}/interview', [AZMediaATSController::class, 'scheduleInterview'])->name('azmedia.portal.candidate.interview');
+    Route::post('/candidate/{id}/scorecard', [AZMediaATSController::class, 'submitScorecard'])->name('azmedia.portal.candidate.scorecard');
+
+    Route::get('/positions', [AZMediaATSController::class, 'positions'])->name('azmedia.portal.positions');
+    Route::post('/positions/create', [AZMediaATSController::class, 'createPosition'])->name('azmedia.portal.positions.create');
+    Route::post('/positions/{id}/update', [AZMediaATSController::class, 'updatePosition'])->name('azmedia.portal.positions.update');
+    Route::delete('/positions/{id}/delete', [AZMediaATSController::class, 'deletePosition'])->name('azmedia.portal.positions.delete');
+    Route::get('/positions/{id}/toggle', [AZMediaATSController::class, 'togglePositionStatus'])->name('azmedia.portal.positions.toggle');
+
+    Route::get('/questions', [AZMediaATSController::class, 'questions'])->name('azmedia.portal.questions');
+    Route::post('/questions/create', [AZMediaATSController::class, 'createQuestion'])->name('azmedia.portal.questions.create');
+    Route::post('/questions/{id}/update', [AZMediaATSController::class, 'updateQuestion'])->name('azmedia.portal.questions.update');
+    Route::delete('/questions/{id}/delete', [AZMediaATSController::class, 'deleteQuestion'])->name('azmedia.portal.questions.delete');
+});
+
+// Giữ lại trang thời trang cũ tại /fashion
+Route::get('/fashion', [IndexController::class, 'index'])->name('fashion.home');
 Route::get('/user/logout', [IndexController::class, 'UserLogout'])->name('user.logout');
 Route::get('/user/profile', [IndexController::class, 'UserProfile'])->name('user.profile');
 Route::post('/user/profile/store', [IndexController::class, 'UserProfileStore'])->name('user.profile.store');

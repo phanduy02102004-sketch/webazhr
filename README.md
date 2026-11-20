@@ -1,71 +1,89 @@
-# Xây dựng website bán hàng thời trang bằng PHP framework Laravel
+# Hệ Thống Tuyển Dụng Thực Tập Sinh Trực Tuyến - AZ Media (AZHR)
 
-Tài khoản Admin: admin@gmail.com / 123456789
+Hệ thống Tuyển dụng & Quản lý Đánh giá Năng lực Thực tập sinh Mini-ATS & Workflow trực tuyến cho Doanh nghiệp AZ Media (Công ty TNHH Đầu tư Phát triển Doanh nghiệp AZ Homes).
 
-**Các chức năng của website**
-- Về khách hàng:
-    + Tạo tài khoản, đăng nhập, đăng xuất, quên mật khẩu
-    + Tìm kiếm sản phẩm (xem sản phẩm theo danh mục)
-    + Thêm sản phẩm vào giỏ hàng, hoặc yêu thích
-    + Đặt hàng
-    + Thanh toán
-    + Theo dõi tình trạng đơn hàng
-    + Tải hoá đơn hàng
-- Về quản trị:
-    + Quản lý sản phẩm
-    + Quản lý đơn hàng (tình trạng đơn hàng, đổi trả)
-    + Quản lý thương hiệu
-    + Quản lý danh mục
-    + Quản lý slider bannner (HomePage)
-    + Quản lý mã giảm giá
-    + Thống kế đơn hàng (theo ngày, tháng, năm)
-    + Quản lý bài viết
-    + Quản lý kho hàng
-    + Quản lý người dùng
+---
 
+## 🌟 Các Phân Hệ Chính
 
-**Package sử dụng :**
-- Laravel Jetstream (tạo, đăng nhập, xuất tài khoản người dùng)
-- Dompdf (format in tạo hóa đơn hàng)
-- bumbummen99/shoppingcart (giỏ hàng)
+### 1. Phân hệ Ứng viên (Careers & Candidate Portal)
+- **Careers Landing Page (`/` hoặc `/careers`):** Giới thiệu văn hóa công ty, chế độ đãi ngộ, môi trường "Thầy giỏi - Bạn tốt - Sách hay", triết lý AZ Media và danh sách các vị trí tuyển dụng thực tập sinh đang mở (lọc theo Chuyên ngành, Hình thức, Địa điểm).
+- **Nộp hồ sơ trực tuyến (`/careers` modal):** Ứng viên điền thông tin, chọn vị trí (hoặc tự điền vị trí khác), tải lên CV PDF.
+- **Quy trình Đánh giá Năng lực 4 phần (`/candidate/test/{code}`):**
+  1. *Phần 1: Đánh giá Năng lực & Tính cách (NLB / NLP, DISC, MBTI, Thần số học đường đời).*
+  2. *Phần 2: Bánh xe cuộc đời (Đánh giá mức độ hài lòng trên thang điểm 1-10).*
+  3. *Phần 3: Hoài bão, Động cơ & Kế hoạch phát triển bản thân (Cam kết, tự luận).*
+  4. *Phần 4: Hiểu biết về Văn hóa & Doanh nghiệp AZ Media (Trắc nghiệm + Tự luận cảm nhận).*
+- **Xuất PDF Bài Test:** Hệ thống tự động biên dịch kết quả bài test thành file PDF hoàn chỉnh chuẩn báo cáo cho Admin/Mentor đánh giá.
+- **Tra cứu kết quả hồ sơ (`/candidate/track`):** Tra cứu theo mã ứng viên hoặc email.
 
-**LINK GIỚI THIỆU WEBSITE:** https://www.youtube.com/watch?v=RZ-g7wzXlaY
+### 2. Phân hệ Quản trị Tuyển dụng (Mini-ATS & Workflow)
+- **Đăng nhập quản trị (`/portal/login`):**
+  - Tài khoản mặc định: `admin@gmail.com` / `123456789` hoặc `admin@azmedia.com.vn` / `123456789`
+- **Dashboard & Analytics (`/portal/dashboard`):** Thống kê số lượng vị trí tuyển, ứng viên đã nộp, ứng viên đã hoàn thành test, tỷ lệ đạt/trúng tuyển.
+- **Quản lý Ứng viên (`/portal/applications` & `/portal/kanban`):**
+  - Pipeline trạng thái: Mới nộp ➔ Đã làm test ➔ Đã duyệt hồ sơ ➔ Hẹn phỏng vấn ➔ Đạt/Mời nhận việc ➔ Từ chối.
+  - Xem chi tiết hồ sơ, mở xem CV trực tuyến, xem/tải file PDF bài test trực tiếp.
+  - Phân công Mentor phỏng vấn (Admin, Lê Đình Quang, Người phụ trách tự điền tên).
+  - Tự động gửi Email thông báo kết quả / lịch phỏng vấn với các biến động `{candidate_name}`, `{position_title}`, `{interview_time}`, `{interview_location}`, `{mentor_name}`.
+- **Quản lý Vị trí Tuyển dụng (`/portal/positions`):** Thêm, sửa, xóa, bật/tắt trạng thái mở tuyển.
+- **Ngân hàng Đề Test (`/portal/questions`):** Quản lý câu hỏi trắc nghiệm, thêm mới, sửa câu hỏi và đáp án, xóa câu hỏi.
 
+---
 
+## 🛠️ Yêu Cầu Cài Đặt & Môi Trường
 
-**MỘT SỐ HÌNH ẢNH VỀ WEBSITE**
-**HOME PAGE**
-![image](https://user-images.githubusercontent.com/59226213/191215224-6a41de85-30b9-4c54-89bc-666fca07373f.png)
+- **PHP:** >= 8.1 (khuyên dùng PHP 8.2)
+- **Web Server:** Apache (XAMPP) hoặc `php artisan serve`
+- **Database:** MySQL / MariaDB (XAMPP)
+- **Composer** & **Node.js**
 
+---
 
-**PAGE PRODUCT**
-![image](https://user-images.githubusercontent.com/59226213/191215583-6fa36d1a-f969-494a-b6df-30e4a318eb20.png)
+## 🚀 Hướng Dẫn Cài Đặt Nhanh
 
+### 1. Clone dự án
+```bash
+git clone https://github.com/phanduy02102004-sketch/webazhr.git
+cd webazhr
+```
 
-**PAGE PRODUCT DETAILS**
-![image](https://user-images.githubusercontent.com/59226213/191215744-ee5915f4-9959-4f28-b4e5-9183af497877.png)
+### 2. Cài đặt thư viện
+```bash
+composer install
+```
 
+### 3. Cấu hình cơ sở dữ liệu (.env)
+Sao chép file `.env.example` thành `.env`:
+```bash
+cp .env.example .env
+php artisan key:generate
+```
+Cấu hình thông số MySQL trong file `.env`:
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=laptrinhwebnangcao
+DB_USERNAME=root
+DB_PASSWORD=
+```
 
-**PAGE MY CART**
-![image](https://user-images.githubusercontent.com/59226213/191215920-5e7ac725-457f-451d-b792-012daa7d6889.png)
+### 4. Import Cơ Sở Dữ Liệu
+Cơ sở dữ liệu hoàn chỉnh đã được xuất sẵn tại file **`webazhr.sql`** (và `database/webazhr.sql`).
+- Mở **phpMyAdmin** (`http://localhost/phpmyadmin`).
+- Tạo cơ sở dữ liệu mới có tên: **`laptrinhwebnangcao`**.
+- Chọn tab **Import** và chọn file **`webazhr.sql`** rồi bấm **Go / Thực hiện**.
 
+Hoặc import qua dòng lệnh MySQL:
+```bash
+mysql -u root -p laptrinhwebnangcao < webazhr.sql
+```
 
-**PAGE MY ORDER**
-![image](https://user-images.githubusercontent.com/59226213/191216356-975a51ea-28ae-4ebd-848c-726ebe8f1df1.png)
-
-![image](https://user-images.githubusercontent.com/59226213/191216476-6c704622-c727-4d5c-8fe1-fd247137271a.png)
-
-**PAGE ADMIN**
-![image](https://user-images.githubusercontent.com/59226213/191216094-c8b38087-cdff-441b-8dad-1281205b97c8.png)
-
-![image](https://user-images.githubusercontent.com/59226213/191216587-8ba92977-ab94-4464-94b9-1dcdab098c23.png)
-
-![image](https://user-images.githubusercontent.com/59226213/191216686-25359f43-b335-4272-8752-528bf195625e.png)
-
-![image](https://user-images.githubusercontent.com/59226213/191216784-3c4c3752-f3bb-4104-808e-051f8e3222a8.png)
-
-![image](https://user-images.githubusercontent.com/59226213/191216873-9b7bda8c-458b-42fb-99b9-564978d98dd7.png)
-
-
-
-
+### 5. Khởi chạy máy chủ
+```bash
+php artisan serve
+```
+Truy cập:
+- **Trang chủ tuyển dụng:** [http://127.0.0.1:8000](http://127.0.0.1:8000)
+- **Trang quản trị ATS:** [http://127.0.0.1:8000/portal](http://127.0.0.1:8000/portal)
