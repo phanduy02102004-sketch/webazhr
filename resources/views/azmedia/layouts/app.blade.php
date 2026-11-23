@@ -83,6 +83,10 @@
                 <a href="{{ route('azmedia.candidate.track') }}" class="hover:text-brand-400 transition flex items-center gap-1">
                     <i class="fa-solid fa-magnifying-glass text-xs"></i> Tra cứu hồ sơ ứng viên
                 </a>
+                <span class="hidden sm:inline">|</span>
+                <a href="{{ route('azmedia.graduation.index') }}" class="hover:text-orange-300 transition flex items-center gap-1 text-orange-400 font-semibold">
+                    <i class="fa-solid fa-graduation-cap text-xs"></i> Chuẩn đầu ra TTS
+                </a>
             </div>
         </div>
     </div>
@@ -123,6 +127,10 @@
                     <a href="{{ route('azmedia.candidate.track') }}" class="hover:text-brand-600 transition flex items-center gap-1 {{ request()->routeIs('azmedia.candidate.track*') ? 'text-brand-600 font-bold' : '' }}">
                         <i class="fa-solid fa-search text-xs"></i> Tra cứu tiến độ
                     </a>
+                    <a href="{{ route('azmedia.graduation.index') }}" class="hover:text-brand-600 transition flex items-center gap-1.5 {{ request()->routeIs('azmedia.graduation*') ? 'text-brand-600 font-bold' : '' }}">
+                        <i class="fa-solid fa-user-graduate text-xs"></i> Chuẩn đầu ra TTS
+                        <span class="px-1.5 py-0.2 rounded-full text-[9px] font-extrabold bg-orange-100 text-orange-700 uppercase">Mới</span>
+                    </a>
                 </nav>
 
                 <!-- Desktop Right Actions -->
@@ -152,6 +160,10 @@
             <a href="{{ route('azmedia.home') }}#core-values" class="block px-3 py-2 rounded-lg text-base font-medium text-slate-700 hover:bg-orange-50 hover:text-brand-600">7 Giá trị cốt lõi</a>
             <a href="{{ route('azmedia.home') }}#about" class="block px-3 py-2 rounded-lg text-base font-medium text-slate-700 hover:bg-orange-50 hover:text-brand-600">Giới thiệu AZ Media</a>
             <a href="{{ route('azmedia.candidate.track') }}" class="block px-3 py-2 rounded-lg text-base font-medium text-slate-700 hover:bg-orange-50 hover:text-brand-600">Tra cứu tiến độ hồ sơ</a>
+            <a href="{{ route('azmedia.graduation.index') }}" class="block px-3 py-2 rounded-lg text-base font-medium text-slate-700 hover:bg-orange-50 hover:text-brand-600 flex items-center justify-between">
+                <span><i class="fa-solid fa-user-graduate text-brand-600 mr-2"></i> Chuẩn đầu ra TTS</span>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-orange-100 text-orange-700">Mới</span>
+            </a>
             <div class="pt-2">
                 <a href="{{ route('azmedia.home') }}#positions" class="block w-full text-center px-4 py-2.5 rounded-xl font-bold text-white gradient-brand btn-pulse-glow">
                     Ứng tuyển ngay
@@ -186,7 +198,7 @@
             </div>
         @endif
 
-        @if ($errors->any())
+        @if (isset($errors) && $errors->any())
             <div class="p-4 mb-4 text-rose-800 bg-rose-50 rounded-xl border border-rose-200 shadow-sm">
                 <div class="flex items-center mb-1">
                     <i class="fa-solid fa-circle-exclamation text-rose-600 mr-2"></i>

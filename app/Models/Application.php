@@ -41,6 +41,11 @@ class Application extends Model
         return $this->hasMany(EmailLog::class, 'application_id');
     }
 
+    public function graduation()
+    {
+        return $this->hasOne(InternGraduation::class, 'application_id');
+    }
+
     public function getStatusBadgeAttribute()
     {
         $badges = [

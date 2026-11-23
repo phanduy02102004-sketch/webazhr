@@ -106,6 +106,11 @@
                    class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('azmedia.portal.questions*') ? 'bg-brand-600 text-white shadow' : 'hover:bg-slate-800 text-slate-300' }}">
                     <i class="fa-solid fa-file-circle-question w-5 text-center text-sm"></i> Ngân hàng Đề Test
                 </a>
+
+                <a href="{{ route('azmedia.portal.graduations.index') }}"
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition {{ request()->routeIs('azmedia.portal.graduations*') ? 'bg-brand-600 text-white shadow' : 'hover:bg-slate-800 text-slate-300' }}">
+                    <i class="fa-solid fa-user-graduate w-5 text-center text-sm"></i> Chuẩn Đầu Ra TTS
+                </a>
             </nav>
         </div>
 

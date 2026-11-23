@@ -33,6 +33,7 @@ use App\Http\Controllers\Frontend\ShopController;
 use App\Http\Controllers\AZMedia\AZMediaCareersController;
 use App\Http\Controllers\AZMedia\CandidatePortalController;
 use App\Http\Controllers\AZMedia\AZMediaATSController;
+use App\Http\Controllers\AZMedia\InternGraduationController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -92,6 +93,14 @@ Route::get('/candidate/test/{code}', [CandidatePortalController::class, 'takeTes
 Route::post('/candidate/test/{code}/submit', [CandidatePortalController::class, 'submitTest'])->name('azmedia.candidate.test.submit');
 Route::get('/candidate/test/{code}/pdf', [CandidatePortalController::class, 'downloadTestPDF'])->name('azmedia.candidate.test.pdf');
 
+// Phân hệ 2.5: Chuẩn Đầu Ra TTS AZ Media (Graduation / Exit Criteria & AZ SUPPORT)
+Route::get('/chuan-dau-ra', [InternGraduationController::class, 'index'])->name('azmedia.graduation.index');
+Route::post('/chuan-dau-ra/tra-cuu', [InternGraduationController::class, 'search'])->name('azmedia.graduation.search');
+Route::post('/chuan-dau-ra/dang-ky', [InternGraduationController::class, 'register'])->name('azmedia.graduation.register');
+Route::post('/chuan-dau-ra/dat-lich-hen', [InternGraduationController::class, 'bookAppointment'])->name('azmedia.graduation.appointment');
+Route::post('/chuan-dau-ra/gioi-thieu-1-1', [InternGraduationController::class, 'submitReferral'])->name('azmedia.graduation.referral');
+Route::post('/chuan-dau-ra/cap-nhat-tien-do', [InternGraduationController::class, 'updateChecklist'])->name('azmedia.graduation.update');
+
 // Download báo cáo công việc tuần (tạo mới mỗi lần tải)
 Route::get('/portal/download-report', [AZMediaATSController::class, 'downloadWeeklyReport'])->name('azmedia.portal.download.report');
 
@@ -124,6 +133,13 @@ Route::prefix('portal')->group(function () {
     Route::post('/questions/create', [AZMediaATSController::class, 'createQuestion'])->name('azmedia.portal.questions.create');
     Route::post('/questions/{id}/update', [AZMediaATSController::class, 'updateQuestion'])->name('azmedia.portal.questions.update');
     Route::delete('/questions/{id}/delete', [AZMediaATSController::class, 'deleteQuestion'])->name('azmedia.portal.questions.delete');
+
+    // Quản lý Chuẩn đầu ra TTS (Admin / BĐH)
+    Route::get('/graduations', [InternGraduationController::class, 'adminIndex'])->name('azmedia.portal.graduations.index');
+    Route::get('/graduations/{id}', [InternGraduationController::class, 'adminDetail'])->name('azmedia.portal.graduations.detail');
+    Route::post('/graduations/{id}/status', [InternGraduationController::class, 'adminUpdateStatus'])->name('azmedia.portal.graduations.status');
+    Route::post('/graduations/{id}/toggle-item', [InternGraduationController::class, 'adminToggleItem'])->name('azmedia.portal.graduations.toggle');
+    Route::get('/graduations/{id}/referral-cv', [InternGraduationController::class, 'adminDownloadCV'])->name('azmedia.portal.graduations.cv');
 });
 
 // Giữ lại trang thời trang cũ tại /fashion
