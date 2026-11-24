@@ -11,6 +11,7 @@ use App\Models\CandidateTest;
 use App\Models\EmailTemplate;
 use App\Models\EmailLog;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Session;
 use PDF;
 
 class CandidatePortalController extends Controller
@@ -70,9 +71,22 @@ class CandidatePortalController extends Controller
      */
     public function takeTest($code)
     {
+        // 1. Kiểm tra xác thực Thực tập sinh (Yêu cầu đăng ký / đăng nhập để làm Chuẩn đầu vào)
+        if (!Session::has('intern_user')) {
+            return redirect()->route('azmedia.intern.login', [
+                'redirect' => route('azmedia.candidate.test', $code),
+                'code' => $code
+            ])->with('warning', 'Theo quy định AZ Media: Chuẩn đầu vào chỉ dành cho Thực tập sinh đã được công ty tiếp nhận. Vui lòng đăng nhập tài khoản TTS để làm bài!');
+        }
+
         $application = Application::with(['candidate', 'position', 'testResult'])
             ->where('application_code', $code)
             ->firstOrFail();
+
+        // 2. Kiểm tra điều kiện: Nếu hồ sơ mới nộp hoặc đang sơ loại CV (chưa có offer)
+        if (!in_array($application->status, ['offered', 'test_sent', 'tested', 'interviewing'])) {
+            return view('azmedia.candidate.test_not_eligible', compact('application'));
+        }
 
         // Kiểm tra xem ứng viên đã làm bài test chưa
         if ($application->testResult && $application->testResult->completed_at) {
@@ -96,6 +110,13 @@ class CandidatePortalController extends Controller
      */
     public function submitTest(Request $request, $code)
     {
+        if (!Session::has('intern_user')) {
+            return redirect()->route('azmedia.intern.login', [
+                'redirect' => route('azmedia.candidate.test', $code),
+                'code' => $code
+            ])->with('error', 'Phiên làm việc đã hết hạn. Vui lòng đăng nhập lại để nộp bài test!');
+        }
+
         $application = Application::with(['candidate', 'position', 'testResult'])
             ->where('application_code', $code)
             ->firstOrFail();

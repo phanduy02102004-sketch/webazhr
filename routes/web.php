@@ -34,6 +34,7 @@ use App\Http\Controllers\AZMedia\AZMediaCareersController;
 use App\Http\Controllers\AZMedia\CandidatePortalController;
 use App\Http\Controllers\AZMedia\AZMediaATSController;
 use App\Http\Controllers\AZMedia\InternGraduationController;
+use App\Http\Controllers\AZMedia\InternAuthController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -92,6 +93,14 @@ Route::post('/candidate/track', [CandidatePortalController::class, 'trackSubmit'
 Route::get('/candidate/test/{code}', [CandidatePortalController::class, 'takeTest'])->name('azmedia.candidate.test');
 Route::post('/candidate/test/{code}/submit', [CandidatePortalController::class, 'submitTest'])->name('azmedia.candidate.test.submit');
 Route::get('/candidate/test/{code}/pdf', [CandidatePortalController::class, 'downloadTestPDF'])->name('azmedia.candidate.test.pdf');
+
+// Phân hệ 2.2: Tài Khoản Thực Tập Sinh (Đăng ký / Đăng nhập TTS)
+Route::get('/intern/login', [InternAuthController::class, 'loginPage'])->name('azmedia.intern.login');
+Route::post('/intern/login', [InternAuthController::class, 'processLogin'])->name('azmedia.intern.login.submit');
+Route::get('/intern/register', [InternAuthController::class, 'registerPage'])->name('azmedia.intern.register');
+Route::post('/intern/register', [InternAuthController::class, 'processRegister'])->name('azmedia.intern.register.submit');
+Route::get('/intern/logout', [InternAuthController::class, 'logout'])->name('azmedia.intern.logout');
+Route::get('/intern/dashboard', [InternAuthController::class, 'dashboard'])->name('azmedia.intern.dashboard')->middleware('intern.auth');
 
 // Phân hệ 2.5: Chuẩn Đầu Ra TTS AZ Media (Graduation / Exit Criteria & AZ SUPPORT)
 Route::get('/chuan-dau-ra', [InternGraduationController::class, 'index'])->name('azmedia.graduation.index');

@@ -84,6 +84,16 @@
                     <i class="fa-solid fa-magnifying-glass text-xs"></i> Tra cứu hồ sơ ứng viên
                 </a>
                 <span class="hidden sm:inline">|</span>
+                @if(Session::has('intern_user'))
+                    <a href="{{ route('azmedia.intern.dashboard') }}" class="hover:text-orange-300 transition flex items-center gap-1 text-orange-400 font-bold">
+                        <i class="fa-solid fa-user-check text-xs"></i> Cổng TTS: {{ Session::get('intern_user')['name'] }}
+                    </a>
+                @else
+                    <a href="{{ route('azmedia.intern.login') }}" class="hover:text-orange-300 transition flex items-center gap-1 text-orange-400 font-semibold">
+                        <i class="fa-solid fa-right-to-bracket text-xs"></i> Đăng nhập TTS (Chuẩn đầu vào/ra)
+                    </a>
+                @endif
+                <span class="hidden sm:inline">|</span>
                 <a href="{{ route('azmedia.graduation.index') }}" class="hover:text-orange-300 transition flex items-center gap-1 text-orange-400 font-semibold">
                     <i class="fa-solid fa-graduation-cap text-xs"></i> Chuẩn đầu ra TTS
                 </a>
@@ -135,9 +145,15 @@
 
                 <!-- Desktop Right Actions -->
                 <div class="hidden md:flex items-center gap-3">
-                    <a href="{{ route('azmedia.candidate.track') }}" class="px-4 py-2 text-sm font-semibold text-slate-700 hover:text-brand-600 hover:bg-slate-100 rounded-lg transition">
-                        Tra cứu kết quả
-                    </a>
+                    @if(Session::has('intern_user'))
+                        <a href="{{ route('azmedia.intern.dashboard') }}" class="px-3 py-2 text-xs font-bold text-brand-700 bg-orange-50 hover:bg-orange-100 rounded-xl transition flex items-center gap-1.5 border border-orange-200">
+                            <i class="fa-solid fa-user-graduate"></i> Cổng TTS: {{ Str::limit(Session::get('intern_user')['name'], 15) }}
+                        </a>
+                    @else
+                        <a href="{{ route('azmedia.intern.login') }}" class="px-3.5 py-2 text-xs font-bold text-slate-700 hover:text-brand-600 hover:bg-slate-100 rounded-xl transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-graduation-cap text-brand-600"></i> Đăng Nhập TTS
+                        </a>
+                    @endif
                     <a href="{{ route('azmedia.home') }}#positions" class="px-5 py-2.5 text-sm font-bold text-white gradient-brand rounded-xl transition btn-pulse-glow">
                         Ứng tuyển ngay <i class="fa-solid fa-arrow-right ml-1"></i>
                     </a>
@@ -164,6 +180,18 @@
                 <span><i class="fa-solid fa-user-graduate text-brand-600 mr-2"></i> Chuẩn đầu ra TTS</span>
                 <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-orange-100 text-orange-700">Mới</span>
             </a>
+            @if(Session::has('intern_user'))
+                <a href="{{ route('azmedia.intern.dashboard') }}" class="block px-3 py-2 rounded-lg text-base font-medium text-brand-600 hover:bg-orange-50 flex items-center justify-between">
+                    <span><i class="fa-solid fa-id-badge text-brand-600 mr-2"></i> Bảng điều khiển TTS ({{ Session::get('intern_user')['name'] }})</span>
+                </a>
+                <a href="{{ route('azmedia.intern.logout') }}" class="block px-3 py-2 rounded-lg text-base font-medium text-rose-600 hover:bg-rose-50">
+                    <i class="fa-solid fa-arrow-right-from-bracket mr-2"></i> Đăng xuất TTS
+                </a>
+            @else
+                <a href="{{ route('azmedia.intern.login') }}" class="block px-3 py-2 rounded-lg text-base font-medium text-slate-700 hover:bg-orange-50 hover:text-brand-600">
+                    <i class="fa-solid fa-graduation-cap text-brand-600 mr-2"></i> Đăng nhập Cổng Thực tập sinh
+                </a>
+            @endif
             <div class="pt-2">
                 <a href="{{ route('azmedia.home') }}#positions" class="block w-full text-center px-4 py-2.5 rounded-xl font-bold text-white gradient-brand btn-pulse-glow">
                     Ứng tuyển ngay

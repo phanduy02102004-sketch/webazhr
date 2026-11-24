@@ -85,59 +85,49 @@ class InternGraduationController extends Controller
      */
     public function index(Request $request)
     {
+        // Yêu cầu Đăng nhập tài khoản Thực tập sinh để sử dụng Chuẩn đầu ra
+        if (!Session::has('intern_user')) {
+            return redirect()->route('azmedia.intern.login', [
+                'redirect' => $request->fullUrl(),
+                'code' => $request->get('code') ?? $request->get('keyword') ?? ''
+            ])->with('warning', 'Theo quy định AZ Media: Chuẩn đầu ra yêu cầu Đăng nhập tài khoản Thực tập sinh (đã được công ty tiếp nhận) để nộp báo cáo và ký duyệt mộc!');
+        }
+
         $config = $this->getGraduationConfig();
-        $keyword = trim($request->get('code') ?? $request->get('keyword') ?? '');
+        $sessionUser = Session::get('intern_user');
+        $candidate = Candidate::with(['applications.position', 'graduations'])->find($sessionUser['id']);
+
         $graduation = null;
         $application = null;
+        $keyword = trim($request->get('code') ?? $request->get('keyword') ?? '');
 
-        if (!empty($keyword)) {
-            // Tìm trong bảng intern_graduations
-            $graduation = InternGraduation::with(['candidate', 'application'])
-                ->where('graduation_code', $keyword)
-                ->orWhere('student_code', $keyword)
-                ->orWhere('email', $keyword)
-                ->orWhere('phone', $keyword)
-                ->latest()
-                ->first();
+        if ($candidate) {
+            $application = $candidate->applications()->latest()->first();
+            $graduation = $candidate->graduations()->latest()->first();
 
-            // Nếu chưa có trong intern_graduations, tìm theo Application code (AZ-2026-XXXX) hoặc Candidate
+            // Nếu đã đăng nhập nhưng chưa có bản ghi Chuẩn đầu ra -> Tự khởi tạo ngay
             if (!$graduation) {
-                $application = Application::with(['candidate', 'position'])
-                    ->where('application_code', $keyword)
-                    ->orWhereHas('candidate', function ($q) use ($keyword) {
-                        $q->where('email', $keyword)->orWhere('phone', $keyword);
-                    })
-                    ->latest()
-                    ->first();
-
-                if ($application) {
-                    // Tự động khởi tạo bản ghi Chuẩn đầu ra tương ứng
-                    $candidate = $application->candidate;
-                    $graduationCode = 'CDR-2026-' . str_pad($application->id, 4, '0', STR_PAD_LEFT);
-
-                    $graduation = InternGraduation::firstOrCreate(
-                        ['application_id' => $application->id],
-                        [
-                            'graduation_code' => $graduationCode,
-                            'candidate_id' => $candidate ? $candidate->id : null,
-                            'student_name' => $candidate ? ($candidate->name ?? 'Thực tập sinh AZ Media') : 'Thực tập sinh AZ Media',
-                            'student_code' => $candidate ? ($candidate->student_id ?? ('SV' . (1000 + $candidate->id))) : null,
-                            'email' => $candidate ? $candidate->email : 'intern@azmedia.com.vn',
-                            'phone' => $candidate ? $candidate->phone : '',
-                            'school' => $candidate ? ($candidate->university ?? 'Đại học tại Đà Nẵng') : 'Đại học tại Đà Nẵng',
-                            'major' => $candidate ? $candidate->major : '',
-                            'intern_position' => $application->position ? $application->position->title : 'Thực tập sinh',
-                            'status' => 'in_progress',
-                        ]
-                    );
-                }
+                $code = 'CDR-2026-' . str_pad($candidate->id, 4, '0', STR_PAD_LEFT);
+                $graduation = InternGraduation::create([
+                    'graduation_code' => $code,
+                    'candidate_id' => $candidate->id,
+                    'application_id' => $application ? $application->id : null,
+                    'student_name' => $candidate->name,
+                    'student_code' => 'TTS-' . $candidate->id,
+                    'email' => $candidate->email,
+                    'phone' => $candidate->phone,
+                    'school' => $candidate->university,
+                    'major' => $candidate->major,
+                    'intern_position' => ($application && $application->position) ? $application->position->title : 'Thực tập sinh',
+                    'status' => 'in_progress',
+                ]);
             }
         }
 
-        // Lấy danh sách hồ sơ gần đây để sinh viên tham khảo/tra cứu nhanh nếu chưa nhập
+        // Lấy danh sách hồ sơ gần đây để sinh viên tham khảo nếu cần
         $recentGraduations = InternGraduation::latest()->take(5)->get();
 
-        return view('azmedia.graduation.index', compact('config', 'keyword', 'graduation', 'application', 'recentGraduations'));
+        return view('azmedia.graduation.index', compact('config', 'keyword', 'graduation', 'application', 'recentGraduations', 'candidate'));
     }
 
     /**
@@ -199,6 +189,10 @@ class InternGraduationController extends Controller
      */
     public function bookAppointment(Request $request)
     {
+        if (!Session::has('intern_user')) {
+            return redirect()->route('azmedia.intern.login')->with('error', 'Vui lòng đăng nhập tài khoản thực tập sinh để đặt lịch hẹn.');
+        }
+
         $request->validate([
             'graduation_code' => 'required|string',
             'appointment_name' => 'required|string|max:150',
@@ -239,6 +233,10 @@ class InternGraduationController extends Controller
      */
     public function submitReferral(Request $request)
     {
+        if (!Session::has('intern_user')) {
+            return redirect()->route('azmedia.intern.login')->with('error', 'Vui lòng đăng nhập tài khoản thực tập sinh để giới thiệu 1+1.');
+        }
+
         $request->validate([
             'graduation_code' => 'required|string',
             'referral_full_info' => 'required|string|max:255',
@@ -295,6 +293,10 @@ class InternGraduationController extends Controller
      */
     public function updateChecklist(Request $request)
     {
+        if (!Session::has('intern_user')) {
+            return redirect()->route('azmedia.intern.login')->with('error', 'Vui lòng đăng nhập tài khoản thực tập sinh.');
+        }
+
         $request->validate([
             'graduation_code' => 'required|string',
         ]);

@@ -35,6 +35,38 @@
             </div>
         </div>
 
+        <!-- Thanh Thông Tin Tài Khoản Thực Tập Sinh Đang Đăng Nhập -->
+        @if(Session::has('intern_user'))
+            @php $intern = Session::get('intern_user'); @endphp
+            <div class="bg-gradient-to-r from-orange-50 to-amber-50 rounded-2xl p-4 border border-orange-200 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+                <div class="flex items-center gap-3">
+                    <span class="w-9 h-9 rounded-xl gradient-brand text-white font-extrabold flex items-center justify-center text-sm shadow">
+                        {{ mb_substr($intern['name'], 0, 1) }}
+                    </span>
+                    <div>
+                        <div class="font-extrabold text-slate-900 flex items-center gap-2">
+                            <span>Tài khoản TTS: {{ $intern['name'] }}</span>
+                            <span class="px-2 py-0.5 rounded-full text-[10px] bg-emerald-100 text-emerald-800 font-bold border border-emerald-200">
+                                <i class="fa-solid fa-circle-check mr-0.5"></i> Đã đăng nhập
+                            </span>
+                        </div>
+                        <div class="text-[11px] text-slate-500">
+                            Email: <strong>{{ $intern['email'] }}</strong> • Trường: <strong>{{ $intern['university'] }}</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <a href="{{ route('azmedia.intern.dashboard') }}" class="px-3.5 py-2 rounded-xl bg-white text-brand-700 hover:bg-orange-100 font-bold border border-orange-200 transition flex items-center gap-1.5 shadow-sm">
+                        <i class="fa-solid fa-id-badge"></i> Bảng điều khiển TTS
+                    </a>
+                    <a href="{{ route('azmedia.intern.logout') }}" class="px-3.5 py-2 rounded-xl bg-rose-50 text-rose-700 hover:bg-rose-100 font-bold border border-rose-200 transition flex items-center gap-1">
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i> Đăng xuất
+                    </a>
+                </div>
+            </div>
+        @endif
+
         <!-- Thanh Tra Cứu Tiến Độ Chuẩn Đầu Ra Của Thực Tập Sinh -->
         <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200">
             <div class="flex flex-col lg:flex-row items-center justify-between gap-6">
